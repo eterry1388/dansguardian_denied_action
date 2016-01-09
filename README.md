@@ -46,9 +46,62 @@ end
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/eterry1388/dansguardian_denied_action.  Please make sure
-all tests pass before making a pull request.
+all tests pass before making a pull request.  The tests require an OS with a `/tmp` directory.
 
 ### How to run system tests
+
+```bash
+rspec
+```
+
+The output should look something like this:
+
+```
+DansguardianDeniedAction
+  DansguardianDeniedAction::AccessLog
+    Updates observer for every new log
+  logs
+    DansguardianDeniedAction::CsvLog
+      raw
+        should eq "\"2016.1.8 19:46:10\",\"fred\",\"192.168.0.1\",\"http://example.com\",\"*DENIED* Banned site: example.com\",\"GET\",\"3804\",\"0\",\"Pornography\",\"1\",\"403\",\"text/html\",\"fred.example.com\",\"group-name\",\"Mozilla/5.0\""
+      date_time
+        should eq "2016.1.8 19:46:10"
+      requesting_user
+        should eq "fred"
+      requesting_ip
+        should eq "192.168.0.1"
+      requested_url
+        should eq "http://example.com"
+      actions
+        should eq "DENIED"
+      reason
+        should eq "Banned site: example.com"
+      subreason
+        should eq "Banned site: example.com"
+      method
+        should eq "GET"
+      size
+        should eq 3804
+      weight
+        should eq 0
+      category
+        should eq "Pornography"
+      filter_group_number
+        should eq 1
+      http_code
+        should eq 403
+      mime_type
+        should eq "text/html"
+      client_name
+        should eq "fred.example.com"
+      filter_group_name
+        should eq "group-name"
+      user_agent
+        should eq "Mozilla/5.0"
+
+Finished in 4.03 seconds (files took 0.10009 seconds to load)
+19 examples, 0 failures
+```
 
 ## License
 
