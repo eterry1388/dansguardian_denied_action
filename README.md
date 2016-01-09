@@ -114,6 +114,8 @@ Your observer class which as the `update` method defined accepts a `log` as it's
 * filter_group_name
 * user_agent
 
+More information on the data within these accessor methods can be found on the [DansGuardian Documentation Wiki](http://contentfilter.futuragts.com/wiki/doku.php?id=the_access.log_files).
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/eterry1388/dansguardian_denied_action.  Please make sure
