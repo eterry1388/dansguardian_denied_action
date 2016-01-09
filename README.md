@@ -16,6 +16,24 @@ gem install dansguardian_denied_action
 
 ## Usage
 
+Dansguardian_denied_action follows the Observer pattern.  See more information in the [Ruby Rdocs](http://ruby-doc.org/stdlib-2.1.0/libdoc/observer/rdoc/Observable.html).  You can add as many observers as you'd like that are triggered when a denied action log is added to the access log.  An observer is an instance of a class that has an `update` method defined.  The `update` method is called whenever the observer is notified (when there is a denied log).
+
+Currently only log file format 2 (CSV-style format) is supported.  Please contribute if you'd like more formats supported.  Make sure your `/etc/dansguardian/dansguardian.conf` has the `logfileformat` set as `2`.  For example:
+
+```bash
+# Log File Format
+# 1 = DansGuardian format (space delimited)
+# 2 = CSV-style format
+# 3 = Squid Log File Format
+# 4 = Tab delimited
+# 5 = Protex format
+# 6 = Protex format with server field blanked
+
+logfileformat = 2
+```
+
+### Example
+
 ```ruby
 require 'dansguardian_denied_action'
 
@@ -41,6 +59,28 @@ end
 @access_log.add_observer( OutputToScreen.new )
 @access_log.add_observer( SendEmail.new )
 @access_log.monitor
+```
+
+## Customization
+
+If you want to trigger your observers on an action other than `DENIED`, you can specify one like so:
+
+```ruby
+@access_log = DansguardianDeniedAction::AccessLog.new(
+  format: DansguardianDeniedAction::LOG_FORMAT_CSV,
+  action: 'INFECTED'
+)
+```
+
+### e2guardian
+
+If you are using e2guardian rather than dansguardian, you want to point to the correct log path.  For example:
+
+```ruby
+@access_log = DansguardianDeniedAction::AccessLog.new(
+  format: DansguardianDeniedAction::LOG_FORMAT_CSV,
+  path: '/var/log/e2guardian/access.log'
+)
 ```
 
 ## Contributing
