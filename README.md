@@ -1,8 +1,8 @@
-# Dansguardian Denied Actiont
+# Dansguardian Denied Action
 
 [![Gem Version](https://badge.fury.io/rb/dansguardian_denied_action.svg)](https://badge.fury.io/rb/dansguardian_denied_action)
 
-Triggers a custom action when a site is blocked/denied.  Works by monitoring the access log of Dansguardian or e2guardian.
+Triggers a custom action when a site is blocked/denied. Works by monitoring the access log of Dansguardian or e2guardian.
 
 [DansGuardian](http://dansguardian.org) is an award winning Open Source web content filter. It filters the actual content of pages based on many methods including phrase matching, PICS filtering and URL filtering. It does not purely filter based on a banned list of sites like lesser totally commercial filters.
 
