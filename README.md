@@ -16,7 +16,7 @@ gem install dansguardian_denied_action
 
 ## Usage
 
-Dansguardian_denied_action follows the Observer pattern.  See more information in the [Ruby Rdocs](http://ruby-doc.org/stdlib-2.1.0/libdoc/observer/rdoc/Observable.html).  You can add as many observers as you'd like that are triggered when a denied action log is added to the access log.  An observer is an instance of a class that has an `update` method defined.  The `update` method is called whenever the observer is notified (when there is a denied log).
+`dansguardian_denied_action` follows the Observer pattern.  See more information from the [Ruby Rdocs](http://ruby-doc.org/stdlib-2.1.0/libdoc/observer/rdoc/Observable.html).  You can add as many observers as you'd like that are triggered when a denied action log is added to the access log.  An observer is an instance of a class that has an `update` method defined.  The `update` method is called whenever the observer is notified (when there is a denied log).
 
 Currently only log file format 2 (CSV-style format) is supported.  Please contribute if you'd like more formats supported.  Make sure your `/etc/dansguardian/dansguardian.conf` has the `logfileformat` set as `2`.  For example:
 
@@ -37,6 +37,7 @@ logfileformat = 2
 ```ruby
 require 'dansguardian_denied_action'
 
+# An observer class that outputs to the screen
 class OutputToScreen
   def update( log )
     puts "IP:       #{log.requesting_ip}"
@@ -45,6 +46,7 @@ class OutputToScreen
   end
 end
 
+# An observer class that sends an email
 class SendEmail
   def update( log )
     message = "Denied page accessed!\n\n"
@@ -55,9 +57,15 @@ class SendEmail
   end
 end
 
+# Initialize the access log class and select the format of dansguardian
 @access_log = DansguardianDeniedAction::AccessLog.new( format: DansguardianDeniedAction::LOG_FORMAT_CSV )
+
+# Add as many observers as you'd like
 @access_log.add_observer( OutputToScreen.new )
 @access_log.add_observer( SendEmail.new )
+
+# Call the monitor method to monitor the log and notify
+# your observers when a blocked page is accessed
 @access_log.monitor
 ```
 
@@ -82,6 +90,29 @@ If you are using e2guardian rather than dansguardian, you want to point to the c
   path: '/var/log/e2guardian/access.log'
 )
 ```
+
+## Log methods
+
+Your observer class which as the `update` method defined accepts a `log` as it's sole argument.  This is an instance of `DansguardianDeniedAction::Log`.  The accessor methods available include:
+
+* raw
+* date_time
+* requesting_user
+* requesting_ip
+* requested_url
+* actions
+* reason
+* subreason
+* method
+* size
+* weight
+* category
+* filter_group_number
+* http_code
+* mime_type
+* client_name
+* filter_group_name
+* user_agent
 
 ## Contributing
 
