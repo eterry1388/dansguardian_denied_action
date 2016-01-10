@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Dansguardian Denied Action by eterry1388</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Dansguardian Denied Action</h1>
+      <h2 class="project-tagline">Triggers a custom action when a site is blocked/denied. Works by monitoring the access log of Dansguardian or e2guardian.</h2>
+      <a href="https://github.com/eterry1388/dansguardian_denied_action" class="btn">View on GitHub</a>
+      <a href="https://github.com/eterry1388/dansguardian_denied_action/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/eterry1388/dansguardian_denied_action/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="dansguardian-denied-action" class="anchor" href="#dansguardian-denied-action" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dansguardian Denied Action</h1>
+
+<p><a href="https://badge.fury.io/rb/dansguardian_denied_action"><img src="https://badge.fury.io/rb/dansguardian_denied_action.svg" alt="Gem Version"></a></p>
+
+<p>Triggers a custom action when a site is blocked/denied. Works by monitoring the access log of Dansguardian or e2guardian.</p>
+
+<p><a href="http://dansguardian.org">DansGuardian</a> is an award winning Open Source web content filter. It filters the actual content of pages based on many methods including phrase matching, PICS filtering and URL filtering. It does not purely filter based on a banned list of sites like lesser totally commercial filters.</p>
+
+<p><a href="http://e2guardian.org">e2guardian</a> is a fork of Dansguardian Project with many improvements and bug fixes, e2guardian is a web content filtering proxy that works in conjunction with another caching proxy such as Squid.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<div class="highlight highlight-source-shell"><pre>gem install dansguardian_denied_action</pre></div>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p><code>dansguardian_denied_action</code> follows the Observer pattern.  See more information from the <a href="http://ruby-doc.org/stdlib-2.1.0/libdoc/observer/rdoc/Observable.html">Ruby Rdocs</a>.  You can add as many observers as you'd like that are triggered when a denied action log is added to the access log.  An observer is an instance of a class that has an <code>update</code> method defined.  The <code>update</code> method is called whenever the observer is notified (when there is a denied log).</p>
+
+<p>Currently only log file format 2 (CSV-style format) is supported.  Please contribute if you'd like more formats supported.  Make sure your <code>/etc/dansguardian/dansguardian.conf</code> has the <code>logfileformat</code> set as <code>2</code>.  For example:</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># Log File Format</span>
+<span class="pl-c"># 1 = DansGuardian format (space delimited)</span>
+<span class="pl-c"># 2 = CSV-style format</span>
+<span class="pl-c"># 3 = Squid Log File Format</span>
+<span class="pl-c"># 4 = Tab delimited</span>
+<span class="pl-c"># 5 = Protex format</span>
+<span class="pl-c"># 6 = Protex format with server field blanked</span>
+
+logfileformat = 2</pre></div>
+
+<h3>
+<a id="example" class="anchor" href="#example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h3>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">'</span>dansguardian_denied_action<span class="pl-pds">'</span></span>
+
+<span class="pl-c"># An observer class that outputs to the screen</span>
+<span class="pl-k">class</span> <span class="pl-en">OutputToScreen</span>
+  <span class="pl-k">def</span> <span class="pl-en">update</span>( <span class="pl-smi">log</span> )
+    puts <span class="pl-s"><span class="pl-pds">"</span>IP:       <span class="pl-pse">#{</span><span class="pl-s1">log.requesting_ip</span><span class="pl-pse"><span class="pl-s1">}</span></span><span class="pl-pds">"</span></span>
+    puts <span class="pl-s"><span class="pl-pds">"</span>URL:      <span class="pl-pse">#{</span><span class="pl-s1">log.requested_url</span><span class="pl-pse"><span class="pl-s1">}</span></span><span class="pl-pds">"</span></span>
+    puts <span class="pl-s"><span class="pl-pds">"</span>Category: <span class="pl-pse">#{</span><span class="pl-s1">log.category</span><span class="pl-pse"><span class="pl-s1">}</span></span><span class="pl-pds">"</span></span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span>
+
+<span class="pl-c"># An observer class that sends an email</span>
+<span class="pl-k">class</span> <span class="pl-en">SendEmail</span>
+  <span class="pl-k">def</span> <span class="pl-en">update</span>( <span class="pl-smi">log</span> )
+    message <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>Denied page accessed!<span class="pl-cce">\n\n</span><span class="pl-pds">"</span></span>
+    message <span class="pl-k">&lt;&lt;</span> <span class="pl-s"><span class="pl-pds">"</span>IP:       <span class="pl-pse">#{</span><span class="pl-s1">log.requesting_ip</span><span class="pl-pse"><span class="pl-s1">}</span></span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>
+    message <span class="pl-k">&lt;&lt;</span> <span class="pl-s"><span class="pl-pds">"</span>URL:      <span class="pl-pse">#{</span><span class="pl-s1">log.requested_url</span><span class="pl-pse"><span class="pl-s1">}</span></span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>
+    message <span class="pl-k">&lt;&lt;</span> <span class="pl-s"><span class="pl-pds">"</span>Category: <span class="pl-pse">#{</span><span class="pl-s1">log.category</span><span class="pl-pse"><span class="pl-s1">}</span></span><span class="pl-pds">"</span></span>
+    <span class="pl-s"><span class="pl-pds">`</span>echo "<span class="pl-pse">#{</span><span class="pl-s1">message</span><span class="pl-pse"><span class="pl-s1">}</span></span>" | mail -s "Denied page" admin@example.com<span class="pl-pds">`</span></span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span>
+
+<span class="pl-c"># Initialize the access log class and select the format of dansguardian</span>
+<span class="pl-smi">@access_log</span> <span class="pl-k">=</span> <span class="pl-c1">DansguardianDeniedAction</span>::<span class="pl-c1">AccessLog</span>.<span class="pl-k">new</span>( <span class="pl-c1">format:</span> <span class="pl-c1">DansguardianDeniedAction</span>::<span class="pl-c1">LOG_FORMAT_CSV</span> )
+
+<span class="pl-c"># Add as many observers as you'd like</span>
+<span class="pl-smi">@access_log</span>.add_observer( <span class="pl-c1">OutputToScreen</span>.<span class="pl-k">new</span> )
+<span class="pl-smi">@access_log</span>.add_observer( <span class="pl-c1">SendEmail</span>.<span class="pl-k">new</span> )
+
+<span class="pl-c"># Call the monitor method to monitor the log and notify</span>
+<span class="pl-c"># your observers when a blocked page is accessed</span>
+<span class="pl-smi">@access_log</span>.monitor</pre></div>
+
+<h2>
+<a id="customization" class="anchor" href="#customization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Customization</h2>
+
+<p>If you want to trigger your observers on an action other than <code>DENIED</code>, you can specify one like so:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-smi">@access_log</span> <span class="pl-k">=</span> <span class="pl-c1">DansguardianDeniedAction</span>::<span class="pl-c1">AccessLog</span>.<span class="pl-k">new</span>(
+  <span class="pl-c1">format:</span> <span class="pl-c1">DansguardianDeniedAction</span>::<span class="pl-c1">LOG_FORMAT_CSV</span>,
+  <span class="pl-c1">action:</span> <span class="pl-s"><span class="pl-pds">'</span>INFECTED<span class="pl-pds">'</span></span>
+)</pre></div>
+
+<h3>
+<a id="e2guardian" class="anchor" href="#e2guardian" aria-hidden="true"><span class="octicon octicon-link"></span></a>e2guardian</h3>
+
+<p>If you are using e2guardian rather than dansguardian, you want to point to the correct log path.  For example:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-smi">@access_log</span> <span class="pl-k">=</span> <span class="pl-c1">DansguardianDeniedAction</span>::<span class="pl-c1">AccessLog</span>.<span class="pl-k">new</span>(
+  <span class="pl-c1">format:</span> <span class="pl-c1">DansguardianDeniedAction</span>::<span class="pl-c1">LOG_FORMAT_CSV</span>,
+  <span class="pl-c1">path:</span> <span class="pl-s"><span class="pl-pds">'</span>/var/log/e2guardian/access.log<span class="pl-pds">'</span></span>
+)</pre></div>
+
+<h2>
+<a id="log-methods" class="anchor" href="#log-methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>Log methods</h2>
+
+<p>Your observer class which as the <code>update</code> method defined accepts a <code>log</code> as it's sole argument.  This is an instance of <code>DansguardianDeniedAction::Log</code>.  The accessor methods available include:</p>
+
+<ul>
+<li>raw</li>
+<li>date_time</li>
+<li>requesting_user</li>
+<li>requesting_ip</li>
+<li>requested_url</li>
+<li>actions</li>
+<li>reason</li>
+<li>subreason</li>
+<li>method</li>
+<li>size</li>
+<li>weight</li>
+<li>category</li>
+<li>filter_group_number</li>
+<li>http_code</li>
+<li>mime_type</li>
+<li>client_name</li>
+<li>filter_group_name</li>
+<li>user_agent</li>
+</ul>
+
+<p>More information on the data within these accessor methods can be found on the <a href="http://contentfilter.futuragts.com/wiki/doku.php?id=the_access.log_files">DansGuardian Documentation Wiki</a>.</p>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>Bug reports and pull requests are welcome on GitHub at <a href="https://github.com/eterry1388/dansguardian_denied_action">https://github.com/eterry1388/dansguardian_denied_action</a>.  Please make sure
+all tests pass before making a pull request.  The tests require an OS with a <code>/tmp</code> directory.</p>
+
+<h3>
+<a id="how-to-run-system-tests" class="anchor" href="#how-to-run-system-tests" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to run system tests</h3>
+
+<div class="highlight highlight-source-shell"><pre>rspec</pre></div>
+
+<p>The output should look something like this:</p>
+
+<pre><code>DansguardianDeniedAction
+  DansguardianDeniedAction::AccessLog
+    Updates observer for every new log
+  logs
+    DansguardianDeniedAction::CsvLog
+      raw
+        should eq "\"2016.1.8 19:46:10\",\"fred\",\"192.168.0.1\",\"http://example.com\",\"*DENIED* Banned site: example.com\",\"GET\",\"3804\",\"0\",\"Pornography\",\"1\",\"403\",\"text/html\",\"fred.example.com\",\"group-name\",\"Mozilla/5.0\""
+      date_time
+        should eq "2016.1.8 19:46:10"
+      requesting_user
+        should eq "fred"
+      requesting_ip
+        should eq "192.168.0.1"
+      requested_url
+        should eq "http://example.com"
+      actions
+        should eq "DENIED"
+      reason
+        should eq "Banned site: example.com"
+      subreason
+        should eq "Banned site: example.com"
+      method
+        should eq "GET"
+      size
+        should eq 3804
+      weight
+        should eq 0
+      category
+        should eq "Pornography"
+      filter_group_number
+        should eq 1
+      http_code
+        should eq 403
+      mime_type
+        should eq "text/html"
+      client_name
+        should eq "fred.example.com"
+      filter_group_name
+        should eq "group-name"
+      user_agent
+        should eq "Mozilla/5.0"
+
+Finished in 4.03 seconds (files took 0.10009 seconds to load)
+19 examples, 0 failures
+</code></pre>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>The gem is available as open source under the terms of the <a href="http://opensource.org/licenses/MIT">MIT License</a>.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/eterry1388/dansguardian_denied_action">Dansguardian Denied Action</a> is maintained by <a href="https://github.com/eterry1388">eterry1388</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
