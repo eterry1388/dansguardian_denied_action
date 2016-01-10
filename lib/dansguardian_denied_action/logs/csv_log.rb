@@ -3,7 +3,10 @@ require 'csv'
 
 module DansguardianDeniedAction
 
+  # Represents a single log line in the access logs with the CSV (2) log file format
   class CsvLog < Log
+
+    # @param raw [String] Raw log line string that will be parsed
     def initialize( raw )
       super
 
