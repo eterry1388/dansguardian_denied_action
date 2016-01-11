@@ -1,4 +1,3 @@
-require 'active_support/core_ext/object'
 require 'dansguardian_denied_action/access_log'
 require 'dansguardian_denied_action/logs/dansguardian_log'
 require 'dansguardian_denied_action/logs/csv_log'

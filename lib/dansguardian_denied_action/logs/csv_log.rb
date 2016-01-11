@@ -20,7 +20,7 @@ module DansguardianDeniedAction
       @requesting_user     = @parsed[1]
       @requesting_ip       = @parsed[2]
       @requested_url       = @parsed[3]
-      action_reason        = @parsed[4].try( :split, '*' ).try( :reject!, &:empty? ).try( :map!, &:strip )
+      action_reason        = @parsed[4]&.split( '*' )&.reject!( &:empty? )&.map!( &:strip )
       if action_reason
         @actions           = action_reason.first # TODO: This is not getting all the actions, but only the first!
         @reason            = action_reason.last
