@@ -23,29 +23,34 @@ describe DansguardianDeniedAction do
       it 'Updates observer for every new log' do
 
         # Create fake access log
-        fake_log = '/tmp/dansguardian_denied_action/access.log'
-        FileUtils.mkdir_p( fake_log.split( '/' )[0..2].join( '/' ) )
+        fake_log_dir = '/tmp/dansguardian_denied_action'
+        fake_log = "#{fake_log_dir}/access.log"
+        FileUtils.mkdir_p( fake_log_dir )
         File.write( fake_log, '' )
 
-        # Observer class that outputs to stdout
-        class OutputToScreen
-          def update( log )
-            puts "IP: #{log.requesting_ip}, URL: #{log.requested_url}, Category: #{log.category}"
+        begin
+          # Observer class that outputs to stdout
+          class OutputToScreen
+            def update( log )
+              puts "IP: #{log.requesting_ip}, URL: #{log.requested_url}, Category: #{log.category}"
+            end
           end
+
+          access_log = DansguardianDeniedAction::AccessLog.new( format: format, path: fake_log )
+          access_log.add_observer( OutputToScreen.new )
+
+          monitor_thread = Thread.new { access_log.monitor( timeout: 4 ) }
+          sleep 2 # Give a chance for the thread to start
+
+          # Append sample log to fake dansguardian log file
+          `echo '#{sample_logs[format]}' >> #{fake_log}`
+
+          expect { monitor_thread.join }.to output(
+            "IP: 192.168.0.1, URL: http://example.com, Category: Pornography\n"
+          ).to_stdout
+        ensure
+          FileUtils.remove_dir( fake_log_dir, true )
         end
-
-        access_log = DansguardianDeniedAction::AccessLog.new( format: format, path: fake_log )
-        access_log.add_observer( OutputToScreen.new )
-
-        monitor_thread = Thread.new { access_log.monitor( timeout: 4 ) }
-        sleep 2 # Give a chance for the thread to start
-
-        # Append sample log to fake dansguardian log file
-        `echo '#{sample_logs[format]}' >> #{fake_log}`
-
-        expect { monitor_thread.join }.to output(
-          "IP: 192.168.0.1, URL: http://example.com, Category: Pornography\n"
-        ).to_stdout
       end
     end
 
