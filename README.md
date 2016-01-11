@@ -1,6 +1,7 @@
 # Dansguardian Denied Action
 
 [![Gem Version](https://badge.fury.io/rb/dansguardian_denied_action.svg)](https://badge.fury.io/rb/dansguardian_denied_action)
+[![Inline docs](http://inch-ci.org/github/eterry1388/dansguardian_denied_action.svg?branch=master)](http://inch-ci.org/github/eterry1388/dansguardian_denied_action)
 
 Triggers a custom action when a site is blocked/denied. Works by monitoring the access log of Dansguardian or e2guardian.
 
