@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/eterry1388/dansguardian_denied_action.svg?branch=master)](https://travis-ci.org/eterry1388/dansguardian_denied_action)
 [![Coverage Status](https://coveralls.io/repos/eterry1388/dansguardian_denied_action/badge.svg?branch=master&service=github)](https://coveralls.io/github/eterry1388/dansguardian_denied_action?branch=master)
 [![Inline docs](http://inch-ci.org/github/eterry1388/dansguardian_denied_action.svg?branch=master)](http://inch-ci.org/github/eterry1388/dansguardian_denied_action)
+[![Dependency Status](https://gemnasium.com/eterry1388/dansguardian_denied_action.svg)](https://gemnasium.com/eterry1388/dansguardian_denied_action)
 
 Triggers a custom action when a site is blocked/denied. Works by monitoring the access log of Dansguardian or e2guardian.
 
