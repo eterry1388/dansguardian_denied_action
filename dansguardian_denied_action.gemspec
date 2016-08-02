@@ -20,11 +20,11 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.3.0'
 
-  spec.add_dependency 'filewatch', '~> 0.7'
+  spec.add_dependency 'filewatch', '~> 0.8'
 
-  spec.add_development_dependency 'bundler', '~> 1.10'
-  spec.add_development_dependency 'rake', '~> 10.0'
-  spec.add_development_dependency 'rspec', '~> 3.3'
-  spec.add_development_dependency 'rspec-its'
-  spec.add_development_dependency 'coveralls'
+  spec.add_development_dependency 'bundler', '~> 1.12'
+  spec.add_development_dependency 'rake', '~> 11.2'
+  spec.add_development_dependency 'rspec', '~> 3.5'
+  spec.add_development_dependency 'rspec-its', '~> 1.2'
+  spec.add_development_dependency 'coveralls', '~> 0.8'
 end
